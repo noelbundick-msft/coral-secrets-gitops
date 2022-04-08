@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coral-secrets-app-deployment
+  namespace: noel-coral-secrets-app-development
+  labels:
+    app: coral-secrets-app
+    workspace: noel
+    target: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coral-secrets-app
+  template:
+    metadata:
+      labels:
+        app: coral-secrets-app
+        workspace: noel
+        target: default
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "80"       
+    spec:
+      containers:
+      - name: coral-secrets-app
+        image: coralsecrets.azurecr.io/nginx
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1
+            memory: 1G
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
