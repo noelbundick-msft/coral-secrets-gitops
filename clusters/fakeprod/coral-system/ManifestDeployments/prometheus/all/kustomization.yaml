@@ -3,4 +3,21 @@ kind: Kustomization
 resources:
   - ../../../../../../applications/coral-system/ManifestDeployments/prometheus
 patches:
-  - ../../../../../../applications/coral-system/ManifestDeployments/prometheus/patches/labels-coral-system.yaml
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      metadata:
+        name: prometheus
+        namespace: prometheus
+      spec:
+        values:
+          alertmanager:
+            podLabels:
+              workspace: coral-system
+          pushgateway:
+            podLabels:
+              workspace: coral-system
+          server:
+            podLabels:
+              workspace: coral-system
+
